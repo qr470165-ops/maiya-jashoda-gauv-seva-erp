@@ -908,15 +908,27 @@ export default function TrusteeDashboardPage() {
 
         {activeTab === 'reports' && (
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.5rem', border: '1px solid #e7e5e4', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>📊 Reports & Analytics</h2>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>📊 Gaushala & Trust Complete Reports & Analytics</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
               <div style={{ backgroundColor: '#fafaf9', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e7e5e4' }}>
                 <p style={{ fontSize: '0.8rem', color: '#78716c', fontWeight: 600, margin: 0 }}>Total Cattle</p>
                 <h3 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#b45309', margin: '0.25rem 0 0' }}>{cattleList.length}</h3>
+                <p style={{ fontSize: '0.75rem', color: '#15803d', margin: '0.3rem 0 0', fontWeight: 600 }}>Healthy: {healthyCount} | Sick: {sickAnimals.length}</p>
               </div>
               <div style={{ backgroundColor: '#fafaf9', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e7e5e4' }}>
-                <p style={{ fontSize: '0.8rem', color: '#78716c', fontWeight: 600, margin: 0 }}>Total Donations</p>
+                <p style={{ fontSize: '0.8rem', color: '#78716c', fontWeight: 600, margin: 0 }}>Total Donations (80G)</p>
                 <h3 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#15803d', margin: '0.25rem 0 0' }}>₹{totalDonations.toLocaleString('en-IN')}</h3>
+                <p style={{ fontSize: '0.75rem', color: '#78716c', margin: '0.3rem 0 0' }}>Receipts: {donationsList.length}</p>
+              </div>
+              <div style={{ backgroundColor: '#fafaf9', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e7e5e4' }}>
+                <p style={{ fontSize: '0.8rem', color: '#78716c', fontWeight: 600, margin: 0 }}>Total Expenses</p>
+                <h3 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#c2410c', margin: '0.25rem 0 0' }}>₹{totalExpenses.toLocaleString('en-IN')}</h3>
+                <p style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 700, margin: '0.3rem 0 0' }}>Net Balance: ₹{netTrustBalance.toLocaleString('en-IN')}</p>
+              </div>
+              <div style={{ backgroundColor: '#fafaf9', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e7e5e4' }}>
+                <p style={{ fontSize: '0.8rem', color: '#78716c', fontWeight: 600, margin: 0 }}>Active Sevadars & Vaccines</p>
+                <h3 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#1e3a8a', margin: '0.25rem 0 0' }}>{staffList.length} Staff</h3>
+                <p style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 600, margin: '0.3rem 0 0' }}>Vaccines Due: {pendingVaccines}</p>
               </div>
             </div>
           </div>
@@ -943,7 +955,6 @@ export default function TrusteeDashboardPage() {
         </div>
       )}
 
-      {/* Other modals omitted for brevity or kept standard */}
       {receiptToPrint && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 200 }}>
           <div style={{ backgroundColor: '#fff', borderRadius: '12px', maxWidth: '600px', width: '100%', padding: '2rem', border: '2px solid #b45309' }}>
