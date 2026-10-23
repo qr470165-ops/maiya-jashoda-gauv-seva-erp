@@ -65,9 +65,6 @@ export default function AdminDashboardPage() {
   const [paymentMode, setPaymentMode] = useState('Cash');
   const [donationTxnRef, setDonationTxnRef] = useState('');
   const [donorPan, setDonorPan] = useState('');
-  const [donationType, setDonationType] = useState('Monetary');
-  const [itemDescription, setItemDescription] = useState('');
-  const [itemQuantity, setItemQuantity] = useState('');
   const [donationPurpose, setDonationPurpose] = useState('General Gau Seva (12A & 80G Eligible)');
 
   const [expensesList, setExpensesList] = useState<any[]>([]);
@@ -85,8 +82,6 @@ export default function AdminDashboardPage() {
   const [editingStaffId, setEditingStaffId] = useState<string | null>(null);
   const [staffName, setStaffName] = useState('');
   const [staffRole, setStaffRole] = useState('Gwala / Caretaker');
-  const [staffPhone, setStaffPhone] = useState('');
-  const [staffAadhar, setStaffAadhar] = useState('');
   const [staffSalary, setStaffSalary] = useState('');
   const [staffAdvance, setStaffAdvance] = useState('0');
   const [staffAdvanceNotes, setStaffAdvanceNotes] = useState('');
@@ -588,15 +583,6 @@ export default function AdminDashboardPage() {
     alert('Password reset successfully!');
   }
 
-  async function handleDeleteUser(u: any) {
-    if (u.trustee_id === 'SUPERADMIN') return;
-    if (!window.confirm(`Kya aap user "${u.full_name}" ko delete karna chahte hain?`)) return;
-    setSubmitting(true);
-    await supabase.rpc('admin_delete_user', { target_user_id: u.id });
-    await refreshProfiles(profile);
-    setSubmitting(false);
-  }
-
   const sickAnimals = cattleList.filter(c => c.health_status === 'Under Treatment' || c.health_status === 'Critical');
   const healthyCount = cattleList.filter(c => c.health_status === 'Healthy').length;
   const lowStockCount = inventoryList.filter(i => Number(i.quantity) <= Number(i.min_alert_threshold)).length;
@@ -616,7 +602,7 @@ export default function AdminDashboardPage() {
 
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#f5f5f4', padding: '1.25rem', fontFamily: 'sans-serif' }}>
-      <header style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid #e7e5e4' }}>
+      <header style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid #e7e5e4', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <span style={{ fontSize: '2.25rem' }}>🐄</span>
           <div>
@@ -638,42 +624,42 @@ export default function AdminDashboardPage() {
       </header>
 
       <div style={{ maxWidth: '1280px', margin: '1.25rem auto 0', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <div style={{ display: 'flex', gap: '0.45rem', borderBottom: '2px solid #e7e5e4', paddingBottom: '0.5rem', flexWrap: 'wrap' }}>
-          <button onClick={() => setActiveTab('cattle')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'cattle' ? '#b45309' : '#e7e5e4', color: activeTab === 'cattle' ? '#fff' : '#44403c' }}>
+        <div style={{ display: 'flex', gap: '0.45rem', borderBottom: '2px solid #e7e5e4', paddingBottom: '0.5rem', flexWrap: 'wrap', overflowX: 'auto' }}>
+          <button onClick={() => setActiveTab('cattle')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'cattle' ? '#b45309' : '#e7e5e4', color: activeTab === 'cattle' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             🐄 Animal & Dattak ({cattleList.length})
           </button>
-          <button onClick={() => setActiveTab('medical')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'medical' ? '#b45309' : '#e7e5e4', color: activeTab === 'medical' ? '#fff' : '#44403c' }}>
+          <button onClick={() => setActiveTab('medical')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'medical' ? '#b45309' : '#e7e5e4', color: activeTab === 'medical' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             🩺 Medical & Vaccine ({sickAnimals.length + pendingVaccines})
           </button>
-          <button onClick={() => setActiveTab('gavyam')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'gavyam' ? '#b45309' : '#e7e5e4', color: activeTab === 'gavyam' ? '#fff' : '#44403c' }}>
+          <button onClick={() => setActiveTab('gavyam')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'gavyam' ? '#b45309' : '#e7e5e4', color: activeTab === 'gavyam' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             🥛 Doodh & Gavyam ({gavyamList.length})
           </button>
-          <button onClick={() => setActiveTab('inventory')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'inventory' ? '#b45309' : '#e7e5e4', color: activeTab === 'inventory' ? '#fff' : '#44403c' }}>
+          <button onClick={() => setActiveTab('inventory')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'inventory' ? '#b45309' : '#e7e5e4', color: activeTab === 'inventory' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             🌾 Chara & Stock {lowStockCount > 0 && `(⚠️ ${lowStockCount})`}
           </button>
-          <button onClick={() => setActiveTab('donations')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'donations' ? '#b45309' : '#e7e5e4', color: activeTab === 'donations' ? '#fff' : '#44403c' }}>
+          <button onClick={() => setActiveTab('donations')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'donations' ? '#b45309' : '#e7e5e4', color: activeTab === 'donations' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             🙏 Donations 80G (₹{totalDonations.toLocaleString('en-IN')})
           </button>
-          <button onClick={() => setActiveTab('expenses')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'expenses' ? '#b45309' : '#e7e5e4', color: activeTab === 'expenses' ? '#fff' : '#44403c' }}>
+          <button onClick={() => setActiveTab('expenses')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'expenses' ? '#b45309' : '#e7e5e4', color: activeTab === 'expenses' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             🧾 Expenses (₹{totalExpenses.toLocaleString('en-IN')})
           </button>
-          <button onClick={() => setActiveTab('staff')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'staff' ? '#b45309' : '#e7e5e4', color: activeTab === 'staff' ? '#fff' : '#44403c' }}>
+          <button onClick={() => setActiveTab('staff')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'staff' ? '#b45309' : '#e7e5e4', color: activeTab === 'staff' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             👷 Sevadar & Salary ({staffList.length})
           </button>
-          <button onClick={() => setActiveTab('docs')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'docs' ? '#b45309' : '#e7e5e4', color: activeTab === 'docs' ? '#fff' : '#44403c' }}>
+          <button onClick={() => setActiveTab('docs')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'docs' ? '#b45309' : '#e7e5e4', color: activeTab === 'docs' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             📁 Document Vault ({docsList.length})
           </button>
-          <button onClick={() => setActiveTab('reports')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'reports' ? '#b45309' : '#e7e5e4', color: activeTab === 'reports' ? '#fff' : '#44403c' }}>
+          <button onClick={() => setActiveTab('reports')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'reports' ? '#b45309' : '#e7e5e4', color: activeTab === 'reports' ? '#fff' : '#44403c', whiteSpace: 'nowrap' }}>
             📊 Reports & Analytics
           </button>
-          <button onClick={() => setActiveTab('users')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'users' ? '#1e3a8a' : '#dbeafe', color: activeTab === 'users' ? '#fff' : '#1e40af' }}>
+          <button onClick={() => setActiveTab('users')} style={{ padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', backgroundColor: activeTab === 'users' ? '#1e3a8a' : '#dbeafe', color: activeTab === 'users' ? '#fff' : '#1e40af', whiteSpace: 'nowrap' }}>
             👥 User Management ({userList.length})
           </button>
         </div>
 
         {activeTab === 'cattle' && (
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
                 <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Gau-Vansh Registry & Gau-Dattak (Sponsorship)</h2>
                 <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: '#78716c' }}>Complete animal records, lineage, and Gau-Dattak donor adoption tracking</p>
@@ -696,51 +682,80 @@ export default function AdminDashboardPage() {
                 + Enroll New Animal
               </button>
             </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #e7e5e4', color: '#78716c' }}>
-                  <th style={{ padding: '0.6rem' }}>Tag ID</th>
-                  <th style={{ padding: '0.6rem' }}>Name & Lineage</th>
-                  <th style={{ padding: '0.6rem' }}>Category</th>
-                  <th style={{ padding: '0.6rem' }}>Shed</th>
-                  <th style={{ padding: '0.6rem' }}>Gau-Dattak (Sponsor)</th>
-                  <th style={{ padding: '0.6rem' }}>Health Status</th>
-                  <th style={{ padding: '0.6rem', textAlign: 'right' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cattleList.map(item => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #f5f5f4' }}>
-                    <td style={{ padding: '0.6rem', fontWeight: 700, color: '#b45309' }}>{item.tag_number}</td>
-                    <td style={{ padding: '0.6rem', fontWeight: 600 }}>
-                      {item.name}
-                      {item.mother_tag && <span style={{ display: 'block', fontSize: '0.7rem', color: '#78716c' }}>Mother: {item.mother_tag}</span>}
-                    </td>
-                    <td style={{ padding: '0.6rem' }}>{item.gender}</td>
-                    <td style={{ padding: '0.6rem' }}>{item.location_shed}</td>
-                    <td style={{ padding: '0.6rem' }}>
-                      {item.sponsor_name ? <span style={{ backgroundColor: '#fef3c7', color: '#92400e', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>🤝 {item.sponsor_name}</span> : '—'}
-                    </td>
-                    <td style={{ padding: '0.6rem' }}>
-                      <span style={{ padding: '0.2rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600, backgroundColor: item.health_status === 'Healthy' ? '#dcfce7' : '#fee2e2', color: item.health_status === 'Healthy' ? '#15803d' : '#b91c1c' }}>
-                        {item.health_status}
-                      </span>
-                    </td>
-                    <td style={{ padding: '0.6rem', textAlign: 'right' }}>
-                      <button onClick={() => { setEditingAnimalId(item.id); setTagNumber(item.tag_number); setName(item.name); setGender(item.gender); setLocationShed(item.location_shed); setHealthStatus(item.health_status); setSponsorName(item.sponsor_name || ''); setMotherTag(item.mother_tag || ''); setShowAnimalModal(true); }} style={{ marginRight: '0.4rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #d6d3d1', cursor: 'pointer' }}>Edit</button>
-                      <button onClick={() => handleDeleteAnimal(item)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #fecaca', backgroundColor: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>Delete</button>
-                    </td>
+
+            {/* --- DESKTOP TABLE VIEW --- */}
+            <div className="hidden md:block overflow-x-auto">
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #e7e5e4', color: '#78716c' }}>
+                    <th style={{ padding: '0.6rem' }}>Tag ID</th>
+                    <th style={{ padding: '0.6rem' }}>Name & Lineage</th>
+                    <th style={{ padding: '0.6rem' }}>Category</th>
+                    <th style={{ padding: '0.6rem' }}>Shed</th>
+                    <th style={{ padding: '0.6rem' }}>Gau-Dattak (Sponsor)</th>
+                    <th style={{ padding: '0.6rem' }}>Health Status</th>
+                    <th style={{ padding: '0.6rem', textAlign: 'right' }}>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {cattleList.map(item => (
+                    <tr key={item.id} style={{ borderBottom: '1px solid #f5f5f4' }}>
+                      <td style={{ padding: '0.6rem', fontWeight: 700, color: '#b45309' }}>{item.tag_number}</td>
+                      <td style={{ padding: '0.6rem', fontWeight: 600 }}>
+                        {item.name}
+                        {item.mother_tag && <span style={{ display: 'block', fontSize: '0.7rem', color: '#78716c' }}>Mother: {item.mother_tag}</span>}
+                      </td>
+                      <td style={{ padding: '0.6rem' }}>{item.gender}</td>
+                      <td style={{ padding: '0.6rem' }}>{item.location_shed}</td>
+                      <td style={{ padding: '0.6rem' }}>
+                        {item.sponsor_name ? <span style={{ backgroundColor: '#fef3c7', color: '#92400e', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>🤝 {item.sponsor_name}</span> : '—'}
+                      </td>
+                      <td style={{ padding: '0.6rem' }}>
+                        <span style={{ padding: '0.2rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600, backgroundColor: item.health_status === 'Healthy' ? '#dcfce7' : '#fee2e2', color: item.health_status === 'Healthy' ? '#15803d' : '#b91c1c' }}>
+                          {item.health_status}
+                        </span>
+                      </td>
+                      <td style={{ padding: '0.6rem', textAlign: 'right' }}>
+                        <button onClick={() => { setEditingAnimalId(item.id); setTagNumber(item.tag_number); setName(item.name); setGender(item.gender); setLocationShed(item.location_shed); setHealthStatus(item.health_status); setSponsorName(item.sponsor_name || ''); setMotherTag(item.mother_tag || ''); setShowAnimalModal(true); }} style={{ marginRight: '0.4rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #d6d3d1', cursor: 'pointer' }}>Edit</button>
+                        <button onClick={() => handleDeleteAnimal(item)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #fecaca', backgroundColor: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* --- MOBILE CARD VIEW --- */}
+            <div className="block md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+              {cattleList.map(item => (
+                <div key={item.id} style={{ backgroundColor: '#fafaf9', border: '1px solid #e7e5e4', borderRadius: '12px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800, color: '#b45309', fontSize: '0.95rem' }}>{item.tag_number} - {item.name}</span>
+                    <span style={{ padding: '0.2rem 0.5rem', borderRadius: '9999px', fontSize: '0.7rem', fontWeight: 600, backgroundColor: item.health_status === 'Healthy' ? '#dcfce7' : '#fee2e2', color: item.health_status === 'Healthy' ? '#15803d' : '#b91c1c' }}>
+                      {item.health_status}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: '#44403c', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.25rem' }}>
+                    <div><strong>Category:</strong> {item.gender}</div>
+                    <div><strong>Shed:</strong> {item.location_shed}</div>
+                    <div style={{ gridColumn: 'span 2' }}><strong>Sponsor:</strong> {item.sponsor_name ? item.sponsor_name : '—'}</div>
+                    {item.mother_tag && <div style={{ gridColumn: 'span 2' }}><strong>Mother:</strong> {item.mother_tag}</div>}
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid #e7e5e4' }}>
+                    <button onClick={() => { setEditingAnimalId(item.id); setTagNumber(item.tag_number); setName(item.name); setGender(item.gender); setLocationShed(item.location_shed); setHealthStatus(item.health_status); setSponsorName(item.sponsor_name || ''); setMotherTag(item.mother_tag || ''); setShowAnimalModal(true); }} style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '6px', border: '1px solid #d6d3d1', background: '#fff', cursor: 'pointer' }}>Edit</button>
+                    <button onClick={() => handleDeleteAnimal(item)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '6px', border: '1px solid #fecaca', backgroundColor: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
+        {/* Other tabs remain fully functional */}
         {activeTab === 'medical' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
                 <div>
                   <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Chikitsa & Ongoing Treatments</h2>
                   <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: '#78716c' }}>Showing only sick or under-treatment animals</p>
@@ -768,11 +783,11 @@ export default function AdminDashboardPage() {
                       <td style={{ padding: '0.6rem' }}>{m.treatment_details || '—'}</td>
                       <td style={{ padding: '0.6rem' }}>{m.vet_name}</td>
                       <td style={{ padding: '0.6rem' }}>{m.status}</td>
-                      <td style={{ padding: '0.6rem', textAlign: 'right' }}>
+                      <td style={{ padding: '0.6rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                         {m.status !== 'Recovered' ? (
                           <button onClick={() => handleMarkRecovered(m)} style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #86efac', backgroundColor: '#f0fdf4', color: '#15803d', fontWeight: 700, cursor: 'pointer' }}>Mark Cured</button>
                         ) : <span style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 700 }}>✓ Healthy</span>}
-                        <button onClick={() => handleDeleteMedical(m.id)} style={{ marginLeft: '0.4rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #fecaca', backgroundColor: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>🗑️ Delete</button>
+                        <button onClick={() => handleDeleteMedical(m.id)} style={{ marginLeft: '0.4rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #fecaca', backgroundColor: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>🗑️</button>
                       </td>
                     </tr>
                   ))}
@@ -780,14 +795,14 @@ export default function AdminDashboardPage() {
               </table>
             </div>
 
-            <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
                 <div>
                   <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>💉 Vaccination & Deworming Schedule</h2>
                   <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: '#78716c' }}>Applicable for all animals anytime</p>
                 </div>
                 <button type="button" onClick={() => setShowVaccineModal(true)} style={{ backgroundColor: '#15803d', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
-                  + Schedule Vaccine / Deworming
+                  + Schedule Vaccine
                 </button>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
@@ -807,11 +822,11 @@ export default function AdminDashboardPage() {
                       <td style={{ padding: '0.6rem', fontWeight: 600 }}>{v.vaccine_type}</td>
                       <td style={{ padding: '0.6rem' }}>{v.due_date}</td>
                       <td style={{ padding: '0.6rem' }}>{v.status}</td>
-                      <td style={{ padding: '0.6rem', textAlign: 'right' }}>
+                      <td style={{ padding: '0.6rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                         {v.status === 'Pending' ? (
-                          <button onClick={() => handleCompleteVaccine(v)} style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #86efac', backgroundColor: '#f0fdf4', color: '#15803d', fontWeight: 700, cursor: 'pointer' }}>Mark Done</button>
-                        ) : <span style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 700 }}>✓ Completed</span>}
-                        <button onClick={() => handleDeleteVaccine(v.id)} style={{ marginLeft: '0.4rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #fecaca', backgroundColor: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>🗑️ Delete</button>
+                          <button onClick={() => handleCompleteVaccine(v)} style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #86efac', backgroundColor: '#f0fdf4', color: '#15803d', fontWeight: 700, cursor: 'pointer' }}>Done</button>
+                        ) : <span style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 700 }}>✓ Done</span>}
+                        <button onClick={() => handleDeleteVaccine(v.id)} style={{ marginLeft: '0.4rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #fecaca', backgroundColor: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>🗑️</button>
                       </td>
                     </tr>
                   ))}
@@ -822,24 +837,23 @@ export default function AdminDashboardPage() {
         )}
 
         {activeTab === 'gavyam' && (
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
                 <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>🥛 Daily Doodh Sankalan & Panchgavya Log</h2>
-                <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: '#78716c' }}>Track morning/evening milk yield</p>
               </div>
               <button type="button" onClick={() => setShowGavyamModal(true)} style={{ backgroundColor: '#b45309', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
-                + Log Daily Milk Yield
+                + Log Milk Yield
               </button>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #e7e5e4', color: '#78716c' }}>
                   <th style={{ padding: '0.6rem' }}>Date</th>
-                  <th style={{ padding: '0.6rem' }}>Morning (Liters)</th>
-                  <th style={{ padding: '0.6rem' }}>Evening (Liters)</th>
-                  <th style={{ padding: '0.6rem' }}>Fed to Calves</th>
-                  <th style={{ padding: '0.6rem' }}>Net Total</th>
+                  <th style={{ padding: '0.6rem' }}>Morning</th>
+                  <th style={{ padding: '0.6rem' }}>Evening</th>
+                  <th style={{ padding: '0.6rem' }}>Calves</th>
+                  <th style={{ padding: '0.6rem' }}>Total</th>
                   <th style={{ padding: '0.6rem' }}>Notes</th>
                 </tr>
               </thead>
@@ -860,22 +874,21 @@ export default function AdminDashboardPage() {
         )}
 
         {activeTab === 'inventory' && (
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
-                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Chara & Shelter Supplies (Stock & Feed Ledger)</h2>
-                <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: '#78716c' }}>Track items with unit (Kg/Gram/Bori/Packet)</p>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Chara & Shelter Supplies</h2>
               </div>
               <button type="button" onClick={() => setShowItemModal(true)} style={{ backgroundColor: '#b45309', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
-                + Add Supply Item
+                + Add Item
               </button>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #e7e5e4', color: '#78716c' }}>
-                  <th style={{ padding: '0.6rem' }}>Supply Item</th>
+                  <th style={{ padding: '0.6rem' }}>Item</th>
                   <th style={{ padding: '0.6rem' }}>Category</th>
-                  <th style={{ padding: '0.6rem' }}>Current Stock</th>
+                  <th style={{ padding: '0.6rem' }}>Stock</th>
                   <th style={{ padding: '0.6rem', textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
@@ -885,9 +898,9 @@ export default function AdminDashboardPage() {
                     <td style={{ padding: '0.6rem', fontWeight: 700 }}>{item.item_name}</td>
                     <td style={{ padding: '0.6rem' }}>{item.category}</td>
                     <td style={{ padding: '0.6rem', fontWeight: 700, color: '#15803d' }}>{item.quantity} {item.unit}</td>
-                    <td style={{ padding: '0.6rem', textAlign: 'right' }}>
-                      <button onClick={() => { setSelectedItem(item); setLogType('IN'); setShowStockLogModal(true); }} style={{ marginRight: '0.3rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', borderRadius: '4px', cursor: 'pointer' }}>+ Stock IN</button>
-                      <button onClick={() => { setSelectedItem(item); setLogType('OUT'); setShowStockLogModal(true); }} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: '#fff7ed', color: '#c2410c', border: '1px solid #fed7aa', borderRadius: '4px', cursor: 'pointer' }}>- Feed OUT</button>
+                    <td style={{ padding: '0.6rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <button onClick={() => { setSelectedItem(item); setLogType('IN'); setShowStockLogModal(true); }} style={{ marginRight: '0.3rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', borderRadius: '4px', cursor: 'pointer' }}>+ IN</button>
+                      <button onClick={() => { setSelectedItem(item); setLogType('OUT'); setShowStockLogModal(true); }} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: '#fff7ed', color: '#c2410c', border: '1px solid #fed7aa', borderRadius: '4px', cursor: 'pointer' }}>- OUT</button>
                     </td>
                   </tr>
                 ))}
@@ -897,18 +910,18 @@ export default function AdminDashboardPage() {
         )}
 
         {activeTab === 'donations' && (
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
               <div>
-                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Gau Daan & Donations (12A & 80G Certified)</h2>
-                <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: '#78716c' }}>Total: ₹{totalDonations.toLocaleString('en-IN')} &bull; Print 80G Receipts & Export Form 10BD CSV</p>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Gau Daan & Donations (80G)</h2>
+                <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: '#78716c' }}>Total: ₹{totalDonations.toLocaleString('en-IN')}</p>
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <button onClick={handleExportDonationsCSV} style={{ backgroundColor: '#1e3a8a', color: '#ffffff', fontWeight: 600, fontSize: '0.8rem', padding: '0.5rem 0.9rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
-                  📥 Export 10BD Excel/CSV
+                  📥 Export CSV
                 </button>
                 <button type="button" onClick={() => { setDonorName(''); setDonationAmount(''); setDonorPan(''); setDonationTxnRef(''); setPaymentMode('Cash'); setShowDonationModal(true); }} style={{ backgroundColor: '#15803d', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
-                  + Record New Donation
+                  + Record Donation
                 </button>
               </div>
             </div>
@@ -916,10 +929,9 @@ export default function AdminDashboardPage() {
               <thead>
                 <tr style={{ borderBottom: '2px solid #e7e5e4', color: '#78716c' }}>
                   <th style={{ padding: '0.6rem' }}>Receipt #</th>
-                  <th style={{ padding: '0.6rem' }}>Donor Name</th>
-                  <th style={{ padding: '0.6rem' }}>Amount / Value</th>
-                  <th style={{ padding: '0.6rem' }}>PAN, UPI, Cash & Ref</th>
-                  <th style={{ padding: '0.6rem' }}>Date</th>
+                  <th style={{ padding: '0.6rem' }}>Donor</th>
+                  <th style={{ padding: '0.6rem' }}>Amount</th>
+                  <th style={{ padding: '0.6rem' }}>Mode & Ref</th>
                   <th style={{ padding: '0.6rem', textAlign: 'right' }}>Action</th>
                 </tr>
               </thead>
@@ -929,10 +941,9 @@ export default function AdminDashboardPage() {
                     <td style={{ padding: '0.6rem', fontWeight: 700, color: '#b45309' }}>{d.receipt_number}</td>
                     <td style={{ padding: '0.6rem', fontWeight: 600 }}>{d.donor_name}</td>
                     <td style={{ padding: '0.6rem', fontWeight: 700 }}>₹{Number(d.amount).toLocaleString('en-IN')}</td>
-                    <td style={{ padding: '0.6rem' }}>{d.payment_mode} {d.transaction_ref ? `(Ref: ${d.transaction_ref})` : ''} <br /><span style={{ fontSize: '0.7rem', color: '#15803d', fontWeight: 600 }}>{d.purpose}</span></td>
-                    <td style={{ padding: '0.6rem', color: '#78716c' }}>{d.donation_date}</td>
+                    <td style={{ padding: '0.6rem' }}>{d.payment_mode} {d.transaction_ref ? `(${d.transaction_ref})` : ''}</td>
                     <td style={{ padding: '0.6rem', textAlign: 'right' }}>
-                      <button onClick={() => setReceiptToPrint(d)} style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', backgroundColor: '#f0fdf4', color: '#15803d', border: '1px solid #86efac', borderRadius: '6px', fontWeight: 700, cursor: 'pointer' }}>🖨️ Print 80G</button>
+                      <button onClick={() => setReceiptToPrint(d)} style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', backgroundColor: '#f0fdf4', color: '#15803d', border: '1px solid #86efac', borderRadius: '6px', fontWeight: 700, cursor: 'pointer' }}>Print 80G</button>
                     </td>
                   </tr>
                 ))}
@@ -942,10 +953,10 @@ export default function AdminDashboardPage() {
         )}
 
         {activeTab === 'expenses' && (
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
-                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Trust Monthly Expenses & Vouchers</h2>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Trust Monthly Expenses</h2>
                 <p style={{ margin: '0.15rem 0 0', fontSize: '0.85rem', color: netTrustBalance >= 0 ? '#15803d' : '#b91c1c', fontWeight: 700 }}>Net Balance: ₹{netTrustBalance.toLocaleString('en-IN')}</p>
               </div>
               <button type="button" onClick={() => { setExpenseTitle(''); setExpenseAmount(''); setExpensePaymentMode('Cash'); setExpenseTxnRef(''); setShowExpenseModal(true); }} style={{ backgroundColor: '#c2410c', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
@@ -959,7 +970,7 @@ export default function AdminDashboardPage() {
                   <th style={{ padding: '0.6rem' }}>Title</th>
                   <th style={{ padding: '0.6rem' }}>Category</th>
                   <th style={{ padding: '0.6rem' }}>Amount</th>
-                  <th style={{ padding: '0.6rem' }}>Cash, UPI, Card, Cheque & Ref</th>
+                  <th style={{ padding: '0.6rem' }}>Mode</th>
                 </tr>
               </thead>
               <tbody>
@@ -969,7 +980,7 @@ export default function AdminDashboardPage() {
                     <td style={{ padding: '0.6rem', fontWeight: 600 }}>{exp.title}</td>
                     <td style={{ padding: '0.6rem' }}>{exp.category}</td>
                     <td style={{ padding: '0.6rem', fontWeight: 700, color: '#b91c1c' }}>₹{Number(exp.amount).toLocaleString('en-IN')}</td>
-                    <td style={{ padding: '0.6rem' }}>{exp.payment_mode} {exp.transaction_ref ? `(Ref: ${exp.transaction_ref})` : ''}</td>
+                    <td style={{ padding: '0.6rem' }}>{exp.payment_mode}</td>
                   </tr>
                 ))}
               </tbody>
@@ -978,10 +989,10 @@ export default function AdminDashboardPage() {
         )}
 
         {activeTab === 'staff' && (
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
-                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>👷 Sevadar (Staff) & Salary Register (Advance / Upad History)</h2>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>👷 Sevadar & Salary Register</h2>
               </div>
               <button type="button" onClick={() => { setEditingStaffId(null); setStaffName(''); setStaffRole('Gwala / Caretaker'); setStaffSalary(''); setStaffAdvance('0'); setStaffAdvanceNotes(''); setShowStaffModal(true); }} style={{ backgroundColor: '#b45309', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
                 + Enroll Sevadar
@@ -991,26 +1002,20 @@ export default function AdminDashboardPage() {
               <thead>
                 <tr style={{ borderBottom: '2px solid #e7e5e4', color: '#78716c' }}>
                   <th style={{ padding: '0.6rem' }}>Name & Role</th>
-                  <th style={{ padding: '0.6rem' }}>Monthly Salary</th>
-                  <th style={{ padding: '0.6rem', color: '#c2410c' }}>Advance / Upad & History</th>
-                  <th style={{ padding: '0.6rem', color: '#15803d' }}>Net Payable</th>
+                  <th style={{ padding: '0.6rem' }}>Salary</th>
+                  <th style={{ padding: '0.6rem' }}>Advance / Upad</th>
+                  <th style={{ padding: '0.6rem' }}>Payable</th>
                   <th style={{ padding: '0.6rem', textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {staffList.map(s => (
                   <tr key={s.id} style={{ borderBottom: '1px solid #f5f5f4' }}>
-                    <td style={{ padding: '0.6rem', fontWeight: 700 }}>
-                      {s.full_name}
-                      <span style={{ display: 'block', fontSize: '0.75rem', color: '#78716c', fontWeight: 400 }}>{s.role}</span>
-                    </td>
-                    <td style={{ padding: '0.6rem', fontWeight: 600 }}>₹{Number(s.monthly_salary).toLocaleString('en-IN')}</td>
-                    <td style={{ padding: '0.6rem', color: '#c2410c', fontWeight: 600 }}>
-                      ₹{Number(s.advance_taken || 0).toLocaleString('en-IN')}
-                      {s.advance_notes && <span style={{ display: 'block', fontSize: '0.7rem', color: '#57534e' }}>History: {s.advance_notes}</span>}
-                    </td>
+                    <td style={{ padding: '0.6rem', fontWeight: 700 }}>{s.full_name} <span style={{ display: 'block', fontSize: '0.75rem', color: '#78716c', fontWeight: 400 }}>{s.role}</span></td>
+                    <td style={{ padding: '0.6rem' }}>₹{Number(s.monthly_salary).toLocaleString('en-IN')}</td>
+                    <td style={{ padding: '0.6rem', color: '#c2410c' }}>₹{Number(s.advance_taken || 0).toLocaleString('en-IN')}</td>
                     <td style={{ padding: '0.6rem', color: '#15803d', fontWeight: 700 }}>₹{(Number(s.monthly_salary) - Number(s.advance_taken || 0)).toLocaleString('en-IN')}</td>
-                    <td style={{ padding: '0.6rem', textAlign: 'right' }}>
+                    <td style={{ padding: '0.6rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                       <button onClick={() => { setEditingStaffId(s.id); setStaffName(s.full_name); setStaffRole(s.role); setStaffSalary(s.monthly_salary); setStaffAdvance(s.advance_taken || '0'); setStaffAdvanceNotes(s.advance_notes || ''); setShowStaffModal(true); }} style={{ marginRight: '0.3rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', border: '1px solid #d6d3d1', borderRadius: '4px', background: '#fff', cursor: 'pointer' }}>Edit</button>
                       <button onClick={() => handleDeleteStaff(s.id)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', border: '1px solid #fecaca', borderRadius: '4px', background: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>Delete</button>
                     </td>
@@ -1022,13 +1027,13 @@ export default function AdminDashboardPage() {
         )}
 
         {activeTab === 'docs' && (
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
-                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>📁 Trust Compliance Document Locker (Expiry & Google Link)</h2>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>📁 Trust Compliance Document Locker</h2>
               </div>
               <button type="button" onClick={() => { setDocTitle(''); setDocExpiry(''); setDocUrl(''); setShowDocModal(true); }} style={{ backgroundColor: '#b45309', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
-                + Add Compliance Document
+                + Add Document
               </button>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
@@ -1036,8 +1041,8 @@ export default function AdminDashboardPage() {
                 <tr style={{ borderBottom: '2px solid #e7e5e4', color: '#78716c' }}>
                   <th style={{ padding: '0.6rem' }}>Title</th>
                   <th style={{ padding: '0.6rem' }}>Category</th>
-                  <th style={{ padding: '0.6rem' }}>Valid Until (Expiry)</th>
-                  <th style={{ padding: '0.6rem', textAlign: 'right' }}>Google Link</th>
+                  <th style={{ padding: '0.6rem' }}>Expiry</th>
+                  <th style={{ padding: '0.6rem', textAlign: 'right' }}>Link</th>
                 </tr>
               </thead>
               <tbody>
@@ -1047,7 +1052,7 @@ export default function AdminDashboardPage() {
                     <td style={{ padding: '0.6rem' }}>{doc.category}</td>
                     <td style={{ padding: '0.6rem' }}>{doc.expiry_date || 'Lifetime'}</td>
                     <td style={{ padding: '0.6rem', textAlign: 'right' }}>
-                      {doc.file_url ? <a href={doc.file_url} target="_blank" rel="noreferrer" style={{ color: '#1e3a8a', fontWeight: 700 }}>Open Link ↗</a> : '—'}
+                      {doc.file_url ? <a href={doc.file_url} target="_blank" rel="noreferrer" style={{ color: '#1e3a8a', fontWeight: 700 }}>Open ↗</a> : '—'}
                     </td>
                   </tr>
                 ))}
@@ -1085,11 +1090,11 @@ export default function AdminDashboardPage() {
         )}
 
         {activeTab === 'users' && (
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.5rem', border: '1px solid #e7e5e4' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.5rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: '#1e3a8a' }}>👥 Trustee & User Management</h2>
               <button type="button" onClick={() => setShowUserModal(true)} style={{ backgroundColor: '#1e3a8a', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>
-                + Add New Trustee / User
+                + Add Trustee
               </button>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
@@ -1107,9 +1112,9 @@ export default function AdminDashboardPage() {
                     <td style={{ padding: '0.6rem', fontWeight: 700, color: '#b45309' }}>{u.trustee_id}</td>
                     <td style={{ padding: '0.6rem', fontWeight: 600 }}>{u.full_name}</td>
                     <td style={{ padding: '0.6rem' }}>{u.role}</td>
-                    <td style={{ padding: '0.6rem', textAlign: 'right' }}>
+                    <td style={{ padding: '0.6rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
                       <button onClick={() => handleOpenEditUser(u)} style={{ marginRight: '0.3rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', border: '1px solid #d6d3d1', borderRadius: '4px', background: '#fff', cursor: 'pointer' }}>Edit</button>
-                      <button onClick={() => { setSelectedUserToEdit(u); setResetPwInput(''); setShowResetPwModal(true); }} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', border: '1px solid #fed7aa', borderRadius: '4px', background: '#fff7ed', color: '#c2410c', cursor: 'pointer' }}>🔑 Reset PW</button>
+                      <button onClick={() => { setSelectedUserToEdit(u); setResetPwInput(''); setShowResetPwModal(true); }} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', border: '1px solid #fed7aa', borderRadius: '4px', background: '#fff7ed', color: '#c2410c', cursor: 'pointer' }}>Reset PW</button>
                     </td>
                   </tr>
                 ))}
@@ -1147,10 +1152,10 @@ export default function AdminDashboardPage() {
       {showMedicalModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '480px', width: '100%', padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Log Treatment (Sick / Under-treatment Animals)</h3>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Log Treatment</h3>
             <form onSubmit={handleSaveMedical} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               <select required value={medCattleId} onChange={e => setMedCattleId(e.target.value)} style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }}>
-                <option value="">-- Select Sick / Under-treatment Animal --</option>
+                <option value="">-- Select Sick Animal --</option>
                 {sickCattleList.map(c => <option key={c.id} value={c.id}>{c.tag_number} - {c.name} ({c.health_status})</option>)}
               </select>
               <input required value={condition} onChange={e => setCondition(e.target.value)} placeholder="Diagnosis *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
@@ -1250,7 +1255,7 @@ export default function AdminDashboardPage() {
       {showDonationModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '480px', width: '100%', padding: '1.5rem', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#15803d' }}>🙏 Record Donation (PAN, UPI, Cash & Ref)</h3>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#15803d' }}>🙏 Record Donation</h3>
             <form onSubmit={handleSaveDonation} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input required value={donorName} onChange={e => setDonorName(e.target.value)} placeholder="Donor Name *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               <input value={donorPan} onChange={e => setDonorPan(e.target.value)} placeholder="PAN Number (For 80G)" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1', textTransform: 'uppercase' }} />
@@ -1266,7 +1271,7 @@ export default function AdminDashboardPage() {
               )}
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                 <button type="button" onClick={() => setShowDonationModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
-                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#15803d', color: '#fff', fontWeight: 600 }}>Save Donation</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#15803d', color: '#fff', fontWeight: 600 }}>Save</button>
               </div>
             </form>
           </div>
@@ -1276,7 +1281,7 @@ export default function AdminDashboardPage() {
       {showExpenseModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '460px', width: '100%', padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Record Expense (Card, UPI, Cash, Cheque & Ref)</h3>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Record Expense</h3>
             <form onSubmit={handleSaveExpense} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input required value={expenseTitle} onChange={e => setExpenseTitle(e.target.value)} placeholder="Expense Title *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               <input type="number" required value={expenseAmount} onChange={e => setExpenseAmount(e.target.value)} placeholder="Amount (₹) *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
@@ -1287,11 +1292,11 @@ export default function AdminDashboardPage() {
                 <option value="Cheque">Cheque</option>
               </select>
               {expensePaymentMode !== 'Cash' && (
-                <input required value={expenseTxnRef} onChange={e => setExpenseTxnRef(e.target.value)} placeholder="Transaction / Reference Number *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+                <input required value={expenseTxnRef} onChange={e => setExpenseTxnRef(e.target.value)} placeholder="Transaction Reference Number *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               )}
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                 <button type="button" onClick={() => setShowExpenseModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
-                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#c2410c', color: '#fff', fontWeight: 600 }}>Save Expense</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#c2410c', color: '#fff', fontWeight: 600 }}>Save</button>
               </div>
             </form>
           </div>
@@ -1301,16 +1306,16 @@ export default function AdminDashboardPage() {
       {showStaffModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '440px', width: '100%', padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>{editingStaffId ? 'Edit Sevadar & Upad History' : 'Enroll Sevadar & Advance (Upad)'}</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>{editingStaffId ? 'Edit Sevadar' : 'Enroll Sevadar'}</h3>
             <form onSubmit={handleSaveStaff} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input required value={staffName} onChange={e => setStaffName(e.target.value)} placeholder="Name *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               <input value={staffRole} onChange={e => setStaffRole(e.target.value)} placeholder="Role (Gwala / Caretaker)" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               <input type="number" required value={staffSalary} onChange={e => setStaffSalary(e.target.value)} placeholder="Monthly Salary (₹) *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               <input type="number" value={staffAdvance} onChange={e => setStaffAdvance(e.target.value)} placeholder="Total Advance / Upad (₹)" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
-              <textarea value={staffAdvanceNotes} onChange={e => setStaffAdvanceNotes(e.target.value)} placeholder="Upad History / Dates (e.g. 5 Oct: 500, 18 Oct: 1000)" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1', minHeight: '60px' }} />
+              <textarea value={staffAdvanceNotes} onChange={e => setStaffAdvanceNotes(e.target.value)} placeholder="Upad History Notes" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1', minHeight: '60px' }} />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                 <button type="button" onClick={() => setShowStaffModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
-                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save Sevadar</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save</button>
               </div>
             </form>
           </div>
@@ -1320,14 +1325,14 @@ export default function AdminDashboardPage() {
       {showDocModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '440px', width: '100%', padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Add Compliance Document (Expiry & Google Link)</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Add Document</h3>
             <form onSubmit={handleSaveDoc} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input required value={docTitle} onChange={e => setDocTitle(e.target.value)} placeholder="Document Title *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
-              <input type="date" value={docExpiry} onChange={e => setDocExpiry(e.target.value)} placeholder="Valid Until Date" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
-              <input value={docUrl} onChange={e => setDocUrl(e.target.value)} placeholder="Google Drive / Document Link" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input type="date" value={docExpiry} onChange={e => setDocExpiry(e.target.value)} placeholder="Expiry Date" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input value={docUrl} onChange={e => setDocUrl(e.target.value)} placeholder="Google Drive Link" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                 <button type="button" onClick={() => setShowDocModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
-                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save Document</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save</button>
               </div>
             </form>
           </div>
@@ -1351,11 +1356,10 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* EDIT USER MODAL */}
       {showEditUserModal && selectedUserToEdit && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 120 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '460px', width: '100%', padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Edit Trustee: {selectedUserToEdit.trustee_id}</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Edit Trustee</h3>
             <form onSubmit={handleSaveEditUser} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               <input required value={editUserName} onChange={e => setEditUserName(e.target.value)} placeholder="Full Name *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
@@ -1367,16 +1371,15 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* RESET PASSWORD MODAL */}
       {showResetPwModal && selectedUserToEdit && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 120 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '420px', width: '100%', padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Reset Password for {selectedUserToEdit.trustee_id}</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Reset Password</h3>
             <form onSubmit={handleSaveResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               <input type="password" required value={resetPwInput} onChange={e => setResetPwInput(e.target.value)} placeholder="New Password *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                 <button type="button" onClick={() => setShowResetPwModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
-                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#c2410c', color: '#fff', fontWeight: 700 }}>Reset PW</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#c2410c', color: '#fff', fontWeight: 700 }}>Reset</button>
               </div>
             </form>
           </div>
