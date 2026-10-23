@@ -7,9 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: maiya-jashoda-gauv-seva-erp
 
     steps:
       - name: Checkout Code
@@ -21,13 +18,13 @@ jobs:
           node-version: 20
 
       - name: Install Dependencies
-        run: npm install
+        run: cd maiya-jashoda-gauv-seva-erp && npm install
 
       - name: Add Android Platform
-        run: npx cap add android
+        run: cd maiya-jashoda-gauv-seva-erp && npx cap add android
 
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: cd maiya-jashoda-gauv-seva-erp && npx cap sync android
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -37,7 +34,7 @@ jobs:
 
       - name: Build APK with Gradle
         run: |
-          cd android
+          cd maiya-jashoda-gauv-seva-erp/android
           chmod +x gradlew
           ./gradlew assembleDebug
 
