@@ -7,6 +7,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: maiya-jashoda-gauv-seva-erp
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -38,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: maiya-jashoda-gauv-seva-erp/android/app/build/outputs/apk/debug/app-debug.apk
