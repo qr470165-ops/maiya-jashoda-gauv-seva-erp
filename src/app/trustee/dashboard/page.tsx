@@ -955,6 +955,31 @@ export default function TrusteeDashboardPage() {
         </div>
       )}
 
+      {showExpenseModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '460px', width: '100%', padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Record Expense</h3>
+            <form onSubmit={handleSaveExpense} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input required value={expenseTitle} onChange={e => setExpenseTitle(e.target.value)} placeholder="Expense Title *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input type="number" required value={expenseAmount} onChange={e => setExpenseAmount(e.target.value)} placeholder="Amount (₹) *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <select value={expensePaymentMode} onChange={e => setExpensePaymentMode(e.target.value)} style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }}>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Card">Card</option>
+                <option value="Cheque">Cheque</option>
+              </select>
+              {expensePaymentMode !== 'Cash' && (
+                <input required value={expenseTxnRef} onChange={e => setExpenseTxnRef(e.target.value)} placeholder="Transaction Reference Number *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              )}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowExpenseModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#c2410c', color: '#fff', fontWeight: 600 }}>Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {receiptToPrint && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 200 }}>
           <div style={{ backgroundColor: '#fff', borderRadius: '12px', maxWidth: '600px', width: '100%', padding: '2rem', border: '2px solid #b45309' }}>
