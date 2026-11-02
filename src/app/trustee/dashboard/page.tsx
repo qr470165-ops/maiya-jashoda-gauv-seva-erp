@@ -588,7 +588,6 @@ export default function TrusteeDashboardPage() {
               </button>
             </div>
 
-            {/* --- DESKTOP TABLE VIEW --- */}
             <div className="hidden md:block overflow-x-auto">
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
                 <thead>
@@ -630,7 +629,6 @@ export default function TrusteeDashboardPage() {
               </table>
             </div>
 
-            {/* --- MOBILE CARD VIEW --- */}
             <div className="block md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
               {cattleList.map(item => (
                 <div key={item.id} style={{ backgroundColor: '#fafaf9', border: '1px solid #e7e5e4', borderRadius: '12px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -656,7 +654,6 @@ export default function TrusteeDashboardPage() {
           </div>
         )}
 
-        {/* Other trustee tabs remain fully intact */}
         {activeTab === 'medical' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
@@ -856,7 +853,7 @@ export default function TrusteeDashboardPage() {
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e7e5e4', overflowX: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Staff</h2>
-              <button type="button" onClick={() => setShowStaffModal(true)} style={{ backgroundColor: '#b45309', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>+ Enroll</button>
+              <button type="button" onClick={() => { setEditingStaffId(null); setStaffName(''); setStaffRole('Gwala / Caretaker'); setStaffSalary(''); setStaffAdvance('0'); setStaffAdvanceNotes(''); setShowStaffModal(true); }} style={{ backgroundColor: '#b45309', color: '#ffffff', fontWeight: 600, fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>+ Enroll</button>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
               <thead>
@@ -864,14 +861,19 @@ export default function TrusteeDashboardPage() {
                   <th style={{ padding: '0.6rem' }}>Name</th>
                   <th style={{ padding: '0.6rem' }}>Salary</th>
                   <th style={{ padding: '0.6rem' }}>Advance</th>
+                  <th style={{ padding: '0.6rem', textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {staffList.map(s => (
                   <tr key={s.id} style={{ borderBottom: '1px solid #f5f5f4' }}>
-                    <td style={{ padding: '0.6rem', fontWeight: 700 }}>{s.full_name}</td>
+                    <td style={{ padding: '0.6rem', fontWeight: 700 }}>{s.full_name} <span style={{ display: 'block', fontSize: '0.7rem', color: '#78716c' }}>{s.role}</span></td>
                     <td style={{ padding: '0.6rem' }}>₹{Number(s.monthly_salary).toLocaleString('en-IN')}</td>
                     <td style={{ padding: '0.6rem', color: '#c2410c' }}>₹{Number(s.advance_taken || 0).toLocaleString('en-IN')}</td>
+                    <td style={{ padding: '0.6rem', textAlign: 'right' }}>
+                      <button onClick={() => { setEditingStaffId(s.id); setStaffName(s.full_name); setStaffRole(s.role); setStaffSalary(s.monthly_salary); setStaffAdvance(s.advance_taken || '0'); setStaffAdvanceNotes(s.advance_notes || ''); setShowStaffModal(true); }} style={{ marginRight: '0.3rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', border: '1px solid #d6d3d1', borderRadius: '4px', background: '#fff', cursor: 'pointer' }}>Edit</button>
+                      <button onClick={() => handleDeleteStaff(s.id)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', border: '1px solid #fecaca', borderRadius: '4px', background: '#fef2f2', color: '#b91c1c', cursor: 'pointer' }}>Delete</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -955,6 +957,130 @@ export default function TrusteeDashboardPage() {
         </div>
       )}
 
+      {showMedicalModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '480px', width: '100%', padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Log Treatment</h3>
+            <form onSubmit={handleSaveMedical} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <select required value={medCattleId} onChange={e => setMedCattleId(e.target.value)} style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }}>
+                <option value="">-- Select Animal --</option>
+                {cattleList.map(c => <option key={c.id} value={c.id}>{c.tag_number} - {c.name}</option>)}
+              </select>
+              <input required value={condition} onChange={e => setCondition(e.target.value)} placeholder="Diagnosis *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input value={treatmentDetails} onChange={e => setTreatmentDetails(e.target.value)} placeholder="Medicines" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowMedicalModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showVaccineModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '440px', width: '100%', padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>💉 Schedule Vaccine</h3>
+            <form onSubmit={handleSaveVaccine} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input required value={vacCattleTag} onChange={e => setVacCattleTag(e.target.value)} placeholder="Animal Tag ID (or ALL) *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <select value={vaccineType} onChange={e => setVaccineType(e.target.value)} style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }}>
+                <option value="FMD (Foot & Mouth)">FMD (Foot & Mouth)</option>
+                <option value="Deworming">Deworming</option>
+                <option value="Anti-Rabies">Anti-Rabies</option>
+                <option value="Other (Manual)">Other (Manual)</option>
+              </select>
+              {vaccineType === 'Other (Manual)' && (
+                <input required value={customVaccine} onChange={e => setCustomVaccine(e.target.value)} placeholder="Custom Vaccine Name *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              )}
+              <input type="date" required value={vacDueDate} onChange={e => setVacDueDate(e.target.value)} style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowVaccineModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#15803d', color: '#fff', fontWeight: 600 }}>Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showGavyamModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '440px', width: '100%', padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>🥛 Log Milk Yield</h3>
+            <form onSubmit={handleSaveGavyam} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input type="number" step="any" required value={morningMilk} onChange={e => setMorningMilk(e.target.value)} placeholder="Morning Milk (L) *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input type="number" step="any" required value={eveningMilk} onChange={e => setEveningMilk(e.target.value)} placeholder="Evening Milk (L) *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input type="number" step="any" value={calfMilk} onChange={e => setCalfMilk(e.target.value)} placeholder="Fed to Calves (L)" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowGavyamModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showItemModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '440px', width: '100%', padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Add Supply Item</h3>
+            <form onSubmit={handleSaveNewItem} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <input required value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Item Name *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <select value={newItemUnit} onChange={e => setNewItemUnit(e.target.value)} style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }}>
+                <option value="Kg">Kg</option>
+                <option value="Bag">Bag</option>
+                <option value="Packet">Packet</option>
+                <option value="Litre">Litre</option>
+              </select>
+              <input type="number" step="any" value={newItemQty} onChange={e => setNewItemQty(e.target.value)} placeholder="Quantity" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowItemModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showStockLogModal && selectedItem && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '420px', width: '100%', padding: '1.75rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>{logType === 'IN' ? 'Stock Entry' : 'Feed Out'}</h3>
+            <form onSubmit={handleSaveStockLog} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <input type="number" step="any" required value={logQty} onChange={e => setLogQty(e.target.value)} placeholder="Quantity *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowStockLogModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#15803d', color: '#fff', fontWeight: 600 }}>Confirm</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showDonationModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '480px', width: '100%', padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#15803d' }}>🙏 Record Donation</h3>
+            <form onSubmit={handleSaveDonation} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input required value={donorName} onChange={e => setDonorName(e.target.value)} placeholder="Donor Name *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input value={donorPan} onChange={e => setDonorPan(e.target.value)} placeholder="PAN Number (For 80G)" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1', textTransform: 'uppercase' }} />
+              <input type="number" required value={donationAmount} onChange={e => setDonationAmount(e.target.value)} placeholder="Amount (₹) *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <select value={paymentMode} onChange={e => setPaymentMode(e.target.value)} style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }}>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Card">Card</option>
+              </select>
+              {paymentMode !== 'Cash' && (
+                <input required value={donationTxnRef} onChange={e => setDonationTxnRef(e.target.value)} placeholder="Transaction Reference *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              )}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowDonationModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#15803d', color: '#fff', fontWeight: 600 }}>Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {showExpenseModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '460px', width: '100%', padding: '1.5rem' }}>
@@ -966,14 +1092,48 @@ export default function TrusteeDashboardPage() {
                 <option value="Cash">Cash</option>
                 <option value="UPI">UPI</option>
                 <option value="Card">Card</option>
-                <option value="Cheque">Cheque</option>
               </select>
               {expensePaymentMode !== 'Cash' && (
-                <input required value={expenseTxnRef} onChange={e => setExpenseTxnRef(e.target.value)} placeholder="Transaction Reference Number *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+                <input required value={expenseTxnRef} onChange={e => setExpenseTxnRef(e.target.value)} placeholder="Transaction Reference *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
               )}
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                 <button type="button" onClick={() => setShowExpenseModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
                 <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#c2410c', color: '#fff', fontWeight: 600 }}>Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showStaffModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '440px', width: '100%', padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>{editingStaffId ? 'Edit Sevadar' : 'Enroll Sevadar'}</h3>
+            <form onSubmit={handleSaveStaff} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input required value={staffName} onChange={e => setStaffName(e.target.value)} placeholder="Name *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input value={staffRole} onChange={e => setStaffRole(e.target.value)} placeholder="Role (Gwala / Caretaker)" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input type="number" required value={staffSalary} onChange={e => setStaffSalary(e.target.value)} placeholder="Monthly Salary (₹) *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input type="number" value={staffAdvance} onChange={e => setStaffAdvance(e.target.value)} placeholder="Advance / Upad (₹)" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowStaffModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showDocModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', zIndex: 110 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '440px', width: '100%', padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 1rem 0' }}>Add Document</h3>
+            <form onSubmit={handleSaveDoc} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input required value={docTitle} onChange={e => setDocTitle(e.target.value)} placeholder="Document Title *" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input type="date" value={docExpiry} onChange={e => setDocExpiry(e.target.value)} placeholder="Expiry Date" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <input value={docUrl} onChange={e => setDocUrl(e.target.value)} placeholder="Document Link / URL" style={{ padding: '0.55rem', borderRadius: '6px', border: '1px solid #d6d3d1' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => setShowDocModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #d6d3d1', backgroundColor: '#fff' }}>Cancel</button>
+                <button type="submit" style={{ padding: '0.5rem 1.2rem', borderRadius: '6px', border: 'none', backgroundColor: '#b45309', color: '#fff', fontWeight: 600 }}>Save</button>
               </div>
             </form>
           </div>
